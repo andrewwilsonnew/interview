@@ -1,14 +1,14 @@
 package com.workday.interview;
 
-import com.workday.interview.andrewwilson.SimpleIds;
 import com.workday.interview.andrewwilson.YourRangeContainerFactory;
+import com.workday.interview.andrewwilson.better.EmptyRange;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertEquals;
 
 /**
@@ -39,12 +39,20 @@ public class BetterUnitTest {
         assertEquals(createShortList(4,6,8,11,12,13,14,15), findIdsInRange(14, 17, true, true) );
     }
 
-    @Test public void testWrongWayRound() {
-        assertEquals(Collections.emptyList(), findIdsInRange(17,14,false,false));
-    }
-
     @Test public void testOverRange() {
         assertEquals(createShortList(1), findIdsInRange(0,22,true, true));
+    }
+
+    @Test public void testBelowRange() {
+        System.out.println(rc.findIdsInRange(0,1,true,true) instanceof EmptyRange);
+    }
+
+    @Test public void testAboveRange() {
+        assertTrue(rc.findIdsInRange(23,24,true,true) instanceof EmptyRange);
+    }
+
+    @Test public void testWrongWayRound() {
+        assertTrue(rc.findIdsInRange(16,15,true,true) instanceof EmptyRange);
     }
 
     private List<Short> findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
