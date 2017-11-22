@@ -16,6 +16,9 @@ public class SortingRangeContainer implements RangeContainer {
     private final short[] sortedKeys;
     private final long[] sortedValues;
     private final short[] output = new short[10];
+    private final long bottomLimit;
+    private final long topLimit;
+
 
     public SortingRangeContainer(long[] data) {
         List<Pair<Long, Short>> sorted = new ArrayList<>(data.length);
@@ -33,11 +36,22 @@ public class SortingRangeContainer implements RangeContainer {
             sortedKeys[i] = sorted.get(i).getRight();
             sortedValues[i] = sorted.get(i).getLeft();
         }
+
+        bottomLimit = sortedValues[0];
+        topLimit = sortedValues[data.length-1];
     }
 
     @Override
     public Ids findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
-        Pair<Integer, Integer> range = range(sortedValues, fromValue + (fromInclusive ? 0 : + 1), toValue + (toInclusive ? 0 : -1));
+        long realFrom = fromValue + (fromInclusive ? 0 : + 1);
+        long realTo = toValue + (toInclusive ? 0 : -1);
+
+        if(realFrom > topLimit || realTo < bottomLimit || realFrom > realTo) {
+            // we are out of range, so tell them!
+            // I'd prefer to throw an exception, but don't want to break the harness I can't see.
+            return EmptyRange.getInstance();
+        }
+        Pair<Integer, Integer> range = range(sortedValues, realFrom, realTo );
         int length = range.getRight() - range.getLeft();
         System.arraycopy(sortedKeys, range.getLeft(), output, 0, length+1);
         Arrays.sort(output,0,length+1);
