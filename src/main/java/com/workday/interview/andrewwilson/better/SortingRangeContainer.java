@@ -37,12 +37,15 @@ public class SortingRangeContainer implements RangeContainer {
 
     @Override
     public Ids findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
-        Pair<Integer, Integer> range = range(sortedValues, fromValue, toValue, fromInclusive, toInclusive);
-        System.arraycopy(sortedKeys, range.getLeft(), output, 0, range.getRight() - range.getLeft());
+        Pair<Integer, Integer> range = range(sortedValues, fromValue + (fromInclusive ? 0 : + 1), toValue + (toInclusive ? 0 : -1));
+        int length = range.getRight() - range.getLeft();
+        System.arraycopy(sortedKeys, range.getLeft(), output, 0, length+1);
+        Arrays.sort(output,0,length+1);
+        output[length+1] = -1;
         return new BetterIds(output);
     }
 
-    public Pair<Integer, Integer> range(long[] data, long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
+    public Pair<Integer, Integer> range(long[] data, long fromValue, long toValue) {
         MyHandler bottom = new MyHandler(data, fromValue, false);
         MyHandler top = new MyHandler(data, toValue,true);
         while(bottom.next() || top.next()) {} // find the ids.
@@ -83,7 +86,7 @@ public class SortingRangeContainer implements RangeContainer {
                 }
             } else {
                 // need to scroll back to the first.
-                while(offset > 0 && data[offset-1] > value) {
+                while(offset > 0 && data[offset-1] >= value) {
                     offset--;
                 }
             }

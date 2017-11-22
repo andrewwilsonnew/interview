@@ -44,7 +44,7 @@ public class BetterUnitTest {
     }
 
     @Test public void testOverRange() {
-        assertEquals(createShortList(1), findIdsInRange(0,5,true, true));
+        assertEquals(createShortList(1), findIdsInRange(0,22,true, true));
     }
 
     private List<Short> findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
