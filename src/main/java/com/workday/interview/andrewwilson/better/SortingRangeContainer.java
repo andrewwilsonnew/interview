@@ -1,9 +1,9 @@
 package com.workday.interview.andrewwilson.better;
 
-import com.sun.tools.javac.util.Pair;
 import com.workday.interview.Ids;
 import com.workday.interview.RangeContainer;
-import com.workday.interview.andrewwilson.SimpleIds;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,25 +20,25 @@ public class SortingRangeContainer implements RangeContainer {
     public SortingRangeContainer(long[] data) {
         List<Pair<Long, Short>> sorted = new ArrayList<>(data.length);
         for(short i=0;i<data.length;i++) {
-            sorted.add(new Pair<>(data[i], i));
+            sorted.add(new ImmutablePair<>(data[i], i));
         }
         // sort them
-        sorted.sort((a,b) -> (int)(a.fst - b.fst));
+        sorted.sort((a,b) -> (int)(a.getLeft() - b.getLeft()));
 
         sortedKeys = new short[data.length];
         sortedValues = new long[data.length];
 
         // write out the 2 arrays in sorted order.
         for(short i=0;i<data.length;i++) {
-            sortedKeys[i] = sorted.get(i).snd;
-            sortedValues[i] = sorted.get(i).fst;
+            sortedKeys[i] = sorted.get(i).getRight();
+            sortedValues[i] = sorted.get(i).getLeft();
         }
     }
 
     @Override
     public Ids findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
         Pair<Integer, Integer> range = range(sortedValues, fromValue, toValue, fromInclusive, toInclusive);
-        System.arraycopy(sortedKeys, range.fst, output, 0, range.snd - range.fst);
+        System.arraycopy(sortedKeys, range.getLeft(), output, 0, range.getRight() - range.getLeft());
         return new BetterIds(output);
     }
 
@@ -46,10 +46,7 @@ public class SortingRangeContainer implements RangeContainer {
         MyHandler bottom = new MyHandler(data, fromValue, false);
         MyHandler top = new MyHandler(data, toValue,true);
         while(bottom.next() || top.next()) {} // find the ids.
-        return new Pair<>(bottom.result(), top.result());
-
-
-
+        return new ImmutablePair<>(bottom.result(), top.result());
     }
 
     public static class MyHandler {
