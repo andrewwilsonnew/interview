@@ -1,8 +1,9 @@
 package com.workday.interview;
 
 import com.workday.interview.andrewwilson.YourRangeContainerFactory;
+import com.workday.interview.andrewwilson.better.BetterIds;
 import com.workday.interview.andrewwilson.better.EmptyRange;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -10,15 +11,16 @@ import java.util.List;
 
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Created by drewwilson on 19/11/2017.
  */
 public class BetterUnitTest {
-    private  RangeContainer rc;
+    private static RangeContainer rc;
 
-    @Before
-    public void setUp(){
+    @BeforeClass
+    public static void setUp(){
         RangeContainerFactory rf = new YourRangeContainerFactory();
         rc = rf.createContainer(new long[]{2,21,10,13,14,13,14,12,17,21,2,15,16,17,16,17,2,21}) ;
     }
@@ -40,7 +42,7 @@ public class BetterUnitTest {
     }
 
     @Test public void testOverRange() {
-        assertEquals(createShortList(1), findIdsInRange(0,22,true, true));
+        assertEquals(createShortList(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17), findIdsInRange(0,22,true, true));
     }
 
     @Test public void testBelowRange() {
@@ -53,6 +55,10 @@ public class BetterUnitTest {
 
     @Test public void testWrongWayRound() {
         assertTrue(rc.findIdsInRange(16,15,true,true) instanceof EmptyRange);
+    }
+
+    @Test public void testSingleValueShouldNotCopy() {
+        assertFalse(((BetterIds)rc.findIdsInRange(16,16,true,true)).isCopy());
     }
 
     private List<Short> findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {

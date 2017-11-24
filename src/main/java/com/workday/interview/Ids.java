@@ -8,4 +8,6 @@ public interface Ids { /**
  * The ids should be in sorted order (from lower to higher) to facilitate * the query distribution into multiple containers.
  */
 static final short END_OF_IDS = -1;
-        short nextId();  }
+        short nextId();
+
+}

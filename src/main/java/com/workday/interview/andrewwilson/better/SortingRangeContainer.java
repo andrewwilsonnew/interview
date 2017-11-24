@@ -16,7 +16,7 @@ import java.util.List;
 public class SortingRangeContainer implements RangeContainer {
     private final short[] sortedKeys;
     private final long[] sortedValues;
-    private final short[] output = new short[10];
+    private final short[] output = new short[Short.MAX_VALUE];
     private final long bottomLimit;
     private final long topLimit;
 
@@ -30,9 +30,18 @@ public class SortingRangeContainer implements RangeContainer {
         sorted.sort(new Comparator<Pair<Long, Short>>() {
             @Override
             public int compare(Pair<Long, Short> a, Pair<Long, Short> b) {
-                return (int) (a.getLeft() - b.getLeft());
+                long left = a.getLeft();
+                long right = b.getLeft();
+                if(left != right) {
+                    // sort by the long first.
+                    return (int)(left - right);
+                } else {
+                    // then sort by the id.
+                   return a.getRight() - b.getRight();
+                }
             }
         });
+        System.out.println(sorted);
 
         sortedKeys = new short[data.length];
         sortedValues = new long[data.length];
@@ -58,11 +67,21 @@ public class SortingRangeContainer implements RangeContainer {
             return EmptyRange.getInstance();
         }
         Pair<Integer, Integer> range = range(sortedValues, realFrom, realTo );
-        int length = range.getRight() - range.getLeft();
-        System.arraycopy(sortedKeys, range.getLeft(), output, 0, length+1);
-        Arrays.sort(output,0,length+1);
-        output[length+1] = -1;
-        return new BetterIds(output);
+        int left = range.getLeft();
+        int right = range.getRight();
+        int length = right - left+1;
+        short[] result = sortedKeys;
+        boolean isCopy = false;
+        if(sortedValues[left] != sortedValues[right]) {
+            // We will need to copy and sort.
+            result = output;
+            System.arraycopy(sortedKeys, left, output, 0, length);
+            Arrays.sort(output, 0, length);
+            left = 0;
+            right = length;
+            isCopy = true;
+        }
+        return new BetterIds(result, left, right, isCopy);
     }
 
     public Pair<Integer, Integer> range(long[] data, long fromValue, long toValue) {
