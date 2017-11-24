@@ -8,7 +8,7 @@ import com.workday.interview.andrewwilson.better.SortingRangeContainer;
  */
 public class YourRangeContainerFactory implements RangeContainerFactory {
     public RangeContainer createContainer(long[] data) {
-        if(data.length > 32000) {
+        if(data.length > Short.MAX_VALUE) {
             throw new RuntimeException("Data has length greater than 32K : " + data.length);
         }
         return new SortingRangeContainer(data);

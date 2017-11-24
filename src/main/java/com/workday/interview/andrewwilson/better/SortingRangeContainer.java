@@ -7,6 +7,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -26,7 +27,12 @@ public class SortingRangeContainer implements RangeContainer {
             sorted.add(new ImmutablePair<>(data[i], i));
         }
         // sort them
-        sorted.sort((a,b) -> (int)(a.getLeft() - b.getLeft()));
+        sorted.sort(new Comparator<Pair<Long, Short>>() {
+            @Override
+            public int compare(Pair<Long, Short> a, Pair<Long, Short> b) {
+                return (int) (a.getLeft() - b.getLeft());
+            }
+        });
 
         sortedKeys = new short[data.length];
         sortedValues = new long[data.length];
@@ -82,7 +88,7 @@ public class SortingRangeContainer implements RangeContainer {
 
         public boolean next() {
             int testOffset = bottomOffset + (topOffset-bottomOffset)/2;
-            System.out.println(bottomOffset + ":" + topOffset + ":" + testOffset + ":" + data[testOffset]+":"+value);
+            //System.out.println(bottomOffset + ":" + topOffset + ":" + testOffset + ":" + data[testOffset]+":"+value);
             if( data[testOffset] >= value) {
                 topOffset = testOffset;
             } else {
