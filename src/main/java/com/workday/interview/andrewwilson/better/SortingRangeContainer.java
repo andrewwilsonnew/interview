@@ -4,6 +4,7 @@ import com.workday.interview.Ids;
 import com.workday.interview.RangeContainer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import sun.misc.Contended;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,14 +15,23 @@ import java.util.List;
  * Created by drewwilson on 20/11/2017.
  */
 public class SortingRangeContainer implements RangeContainer {
+    //@Contended
     private final short[] sortedKeys;
+    //@Contended
     private final long[] sortedValues;
+    //@Contended
     private final short[] output = new short[Short.MAX_VALUE];
+
     private final long bottomLimit;
     private final long topLimit;
+    private final MyHandler bottomHandler = new MyHandler(false);
+    private final MyHandler topHandler = new MyHandler(true);
+    private final BetterIds ids = new BetterIds();
+    private final Thread thread;
 
 
     public SortingRangeContainer(long[] data) {
+        thread = Thread.currentThread();
         List<Pair<Long, Short>> sorted = new ArrayList<>(data.length);
         for(short i=0;i<data.length;i++) {
             sorted.add(new ImmutablePair<>(data[i], i));
@@ -41,7 +51,7 @@ public class SortingRangeContainer implements RangeContainer {
                 }
             }
         });
-        System.out.println(sorted);
+        //System.out.println(sorted);
 
         sortedKeys = new short[data.length];
         sortedValues = new long[data.length];
@@ -58,57 +68,59 @@ public class SortingRangeContainer implements RangeContainer {
 
     @Override
     public Ids findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
-        long realFrom = fromValue + (fromInclusive ? 0 : + 1);
-        long realTo = toValue + (toInclusive ? 0 : -1);
+        if(!Thread.currentThread().equals(thread)) {
+            throw new IllegalThreadStateException("Can only be used by a single thread for performance reasons");
+        }
 
-        if(realFrom > topLimit || realTo < bottomLimit || realFrom > realTo) {
+        if(     (fromInclusive ? fromValue > topLimit : fromValue >= topLimit) || // we are over the topLimit
+                (toInclusive ? toValue < bottomLimit : toValue <= bottomLimit) || // we are below the bottomLimit
+                ( toInclusive && fromInclusive ? fromValue > toValue : fromValue >= toValue ))  // ranges don't overlap
+        {
             // we are out of range, so tell them!
-            // I'd prefer to throw an exception, but don't want to break the harness I can't see.
             return EmptyRange.getInstance();
         }
-        Pair<Integer, Integer> range = range(sortedValues, realFrom, realTo );
-        int left = range.getLeft();
-        int right = range.getRight();
-        int length = right - left+1;
-        short[] result = sortedKeys;
-        boolean isCopy = false;
+        bottomHandler.setValue(fromValue, fromInclusive);
+        topHandler.setValue(toValue,toInclusive);
+        while(bottomHandler.next() || topHandler.next()) {} // find the ids.
+
+        int left = bottomHandler.result();
+        int right = topHandler.result();
+        int length = right - left + 1;
+
         if(sortedValues[left] != sortedValues[right]) {
             // We will need to copy and sort.
-            result = output;
             System.arraycopy(sortedKeys, left, output, 0, length);
             Arrays.sort(output, 0, length);
-            left = 0;
-            right = length;
-            isCopy = true;
+            ids.setValues(output,0, length-1, true);
+        } else {
+            // already sorted.
+            ids.setValues(sortedKeys, left, right, false);
         }
-        return new BetterIds(result, left, right, isCopy);
+        return ids;
     }
 
-    public Pair<Integer, Integer> range(long[] data, long fromValue, long toValue) {
-        MyHandler bottom = new MyHandler(data, fromValue, false);
-        MyHandler top = new MyHandler(data, toValue,true);
-        while(bottom.next() || top.next()) {} // find the ids.
-        return new ImmutablePair<>(bottom.result(), top.result());
-    }
-
-    public static class MyHandler {
-        private final long[] data;
-        private final long value;
+    public class MyHandler {
+        private long value;
         private final boolean isTop;
-        private int bottomOffset = 0;
+        private boolean include;
+        private int bottomOffset;
         private int topOffset;
 
-        public MyHandler(long[] data, long value, boolean isTop) {
-            this.data = data;
-            this.value = value;
+        public MyHandler(boolean isTop) {
             this.isTop = isTop;
-            topOffset = data.length;
+        }
+
+        public void setValue(long value, boolean include) {
+            this.value = value;
+            this.include = include;
+            bottomOffset = 0;
+            topOffset = sortedValues.length;
         }
 
         public boolean next() {
             int testOffset = bottomOffset + (topOffset-bottomOffset)/2;
             //System.out.println(bottomOffset + ":" + topOffset + ":" + testOffset + ":" + data[testOffset]+":"+value);
-            if( data[testOffset] >= value) {
+            if( include ? sortedValues[testOffset] >= value : sortedValues[testOffset] > value) {
                 topOffset = testOffset;
             } else {
                 bottomOffset = testOffset;
@@ -120,12 +132,12 @@ public class SortingRangeContainer implements RangeContainer {
             int offset = isTop ? bottomOffset : topOffset;
             if (isTop) {
                 // need to scroll to the last.
-                while(offset < data.length - 1 && data[offset+1] <= value) {
+                while(offset < sortedValues.length -1  && (include ? sortedValues[offset+1] <= value : sortedValues[offset+1] < value)) {
                     offset++;
                 }
             } else {
                 // need to scroll back to the first.
-                while(offset > 0 && data[offset-1] >= value) {
+                while(offset > 0 && (include ? sortedValues[offset-1] >= value : sortedValues[offset-1] > value)) {
                     offset--;
                 }
             }
