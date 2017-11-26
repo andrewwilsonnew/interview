@@ -3,7 +3,6 @@ package com.workday.interview;
 import com.workday.interview.andrewwilson.YourRangeContainerFactory;
 import com.workday.interview.andrewwilson.better.BetterIds;
 import com.workday.interview.andrewwilson.better.EmptyRange;
-import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -71,9 +70,14 @@ public class BetterUnitTest {
         assertEquals(createShortList(0), findIdsInRange(rf.createContainer(new long[] { Long.MAX_VALUE } ), Long.MAX_VALUE, Long.MAX_VALUE, true, true));
     }
 
+    @Test public void testNegatives() {
+        assertEquals(createShortList(0,2,3,5,6,7), findIdsInRange(rf.createContainer(new long[] {-1,3,-2,1,-3,1,2,-2,-3,Long.MIN_VALUE, Long.MAX_VALUE}), -2,2,true,true));
+    }
+
     private List<Short> findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
         return findIdsInRange(rc, fromValue,toValue,fromInclusive,toInclusive);
     }
+
 
     private List<Short> findIdsInRange(RangeContainer myRc, long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
         Ids ids = myRc.findIdsInRange(fromValue, toValue, fromInclusive, toInclusive);

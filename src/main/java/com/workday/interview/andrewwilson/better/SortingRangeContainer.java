@@ -45,7 +45,7 @@ public class SortingRangeContainer implements RangeContainer {
                 long right = b.getLeft();
                 if(left != right) {
                     // sort by the long first.
-                    return (int)(left - right);
+                    return left > right ? 1 : -1;
                 } else {
                     // then sort by the id.
                    return a.getRight() - b.getRight();
