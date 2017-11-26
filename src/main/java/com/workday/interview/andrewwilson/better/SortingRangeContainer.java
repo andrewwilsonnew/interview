@@ -20,7 +20,7 @@ public class SortingRangeContainer implements RangeContainer {
     //@Contended
     private final long[] sortedValues;
     //@Contended
-    private final short[] output = new short[Short.MAX_VALUE];
+    private final short[] output;
 
     private final long bottomLimit;
     private final long topLimit;
@@ -31,6 +31,7 @@ public class SortingRangeContainer implements RangeContainer {
 
 
     public SortingRangeContainer(long[] data) {
+        output = new short[data.length];
         thread = Thread.currentThread();
         List<Pair<Long, Short>> sorted = new ArrayList<>(data.length);
         for(short i=0;i<data.length;i++) {
@@ -79,6 +80,7 @@ public class SortingRangeContainer implements RangeContainer {
             // we are out of range, so tell them!
             return EmptyRange.getInstance();
         }
+
         bottomHandler.setValue(fromValue, fromInclusive);
         topHandler.setValue(toValue,toInclusive);
         while(bottomHandler.next() || topHandler.next()) {} // find the ids.
