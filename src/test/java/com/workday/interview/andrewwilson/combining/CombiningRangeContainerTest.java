@@ -46,9 +46,9 @@ public class CombiningRangeContainerTest extends BinarySearchRangeContainerTest 
     @Test public void TwoThreadsShouldGetDifferentInstances() throws InterruptedException, ExecutionException, TimeoutException {
         final RangeContainer rangeContainer = getRangeContainer(SAMPLE_DATA);
         Ids ids = rangeContainer.findIdsInRange(0, 20, true, true);
-        Future<?> submit = Executors.newCachedThreadPool().submit(() -> rangeContainer.findIdsInRange(0, 20, true, true));
-        Ids o = (Ids) submit.get(10, TimeUnit.SECONDS);
-        assertFalse("Should be different", o.equals(ids));
+        Future<Ids> submit = Executors.newCachedThreadPool().submit(() -> rangeContainer.findIdsInRange(0, 20, true, true));
+        Ids check = submit.get(10, TimeUnit.SECONDS);
+        assertFalse("Should be different", check.equals(ids));
 
     }
 
@@ -56,8 +56,8 @@ public class CombiningRangeContainerTest extends BinarySearchRangeContainerTest 
     public void HarshCheckingThreadsFailsCorrectly() throws InterruptedException, TimeoutException, ExecutionException {
         final RangeContainer rangeContainer = getRangeContainer(SAMPLE_DATA);
         final Ids idsInRange = rangeContainer.findIdsInRange(1, 20, true, true);
-        Future<?> submit = Executors.newCachedThreadPool().submit(() -> idsInRange.nextId());
-        Ids o = (Ids) submit.get(10, TimeUnit.SECONDS);
+        Future<Short> submit = Executors.newCachedThreadPool().submit(() -> idsInRange.nextId());
+        submit.get(10, TimeUnit.SECONDS);
     }
 
     @Test public void testBelowRange() {
