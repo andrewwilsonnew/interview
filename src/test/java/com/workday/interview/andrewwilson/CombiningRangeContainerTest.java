@@ -32,4 +32,9 @@ public class CombiningRangeContainerTest extends BinarySearchRangeContainerTest 
     @Test public void testAboveHalfRangeScanning() {
         assertEquals("Above half range we should scan",ScanningIds.class, rc.findIdsInRange(2,20,true,true).getClass() );
     }
+
+    @Test(expected=ArrayIndexOutOfBoundsException.class)
+    public void greaterThan32KFails() {
+        getRangeContainer(new long[Short.MAX_VALUE+2]);
+    }
 }

@@ -14,6 +14,9 @@ public class CombiningRangeContainer implements RangeContainer {
     private final ScanningRangeContainer scanningRangeContainer;
 
     public CombiningRangeContainer(long[] data) {
+        if(data.length > Short.MAX_VALUE) {
+            throw new ArrayIndexOutOfBoundsException("Data has length greater than 32K : " + data.length);
+        }
         binarySearchRangeContainer = new BinarySearchRangeContainer(data);
         scanningRangeContainer = new ScanningRangeContainer(data);
     }
