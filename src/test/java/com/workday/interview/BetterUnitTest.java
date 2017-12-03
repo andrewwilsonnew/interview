@@ -47,7 +47,7 @@ public class BetterUnitTest {
     }
 
     @Test public void testBelowRange() {
-        System.out.println(rc.findIdsInRange(0,1,true,true) instanceof EmptyRange);
+        assertTrue(rc.findIdsInRange(0,1,true,true) instanceof EmptyRange);
     }
 
     @Test public void testAboveRange() {

@@ -37,7 +37,7 @@ public class SortingRangeContainer implements RangeContainer {
         for(short i=0;i<data.length;i++) {
             sorted.add(new ImmutablePair<>(data[i], i));
         }
-        // sort them
+        // sort them, removed the lambda because of java -prof
         sorted.sort(new Comparator<Pair<Long, Short>>() {
             @Override
             public int compare(Pair<Long, Short> a, Pair<Long, Short> b) {
@@ -47,8 +47,8 @@ public class SortingRangeContainer implements RangeContainer {
                     // sort by the long first.
                     return left > right ? 1 : -1;
                 } else {
-                    // then sort by the id.
-                   return a.getRight() - b.getRight();
+                    // then sort by the id, this is ok, because we know they are positive numbers.
+                   return a.getRight() > b.getRight() ? 1 : -1;
                 }
             }
         });
