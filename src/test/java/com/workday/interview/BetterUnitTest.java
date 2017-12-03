@@ -1,7 +1,7 @@
 package com.workday.interview;
 
 import com.workday.interview.andrewwilson.YourRangeContainerFactory;
-import com.workday.interview.andrewwilson.better.BetterIds;
+import com.workday.interview.andrewwilson.better.BinarySearchIds;
 import com.workday.interview.andrewwilson.better.EmptyRange;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,7 +14,12 @@ import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 /**
- * Created by drewwilson on 19/11/2017.
+ * The worst test cases.
+ * 1. return the entire 32K row - its slow and ugly - iterate through and return is probably the best - my original solution.
+ * 2. A single id at the end.  This would be really bad with the linear search.
+ * 3. Things that return nothing - this should return a singleton - ranges backwards.  ranges below our range.  ranges above our range.
+ * I like my solution, it respects the ranges and does what it needs to do.
+ * Now lets optimise it.  Java - prof probably the best way to start.
  */
 public class BetterUnitTest {
     private static RangeContainer rc;
@@ -59,7 +64,7 @@ public class BetterUnitTest {
     }
 
     @Test public void testSingleValueShouldNotCopy() {
-        assertFalse(((BetterIds)rc.findIdsInRange(16,16,true,true)).isCopy());
+        assertFalse(((BinarySearchIds)rc.findIdsInRange(16,16,true,true)).isCopy());
     }
 
     @Test public void testMinValue() {

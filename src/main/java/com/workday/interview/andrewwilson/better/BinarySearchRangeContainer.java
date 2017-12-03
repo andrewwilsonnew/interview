@@ -2,9 +2,9 @@ package com.workday.interview.andrewwilson.better;
 
 import com.workday.interview.Ids;
 import com.workday.interview.RangeContainer;
+import com.workday.interview.andrewwilson.ScanningIds;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import sun.misc.Contended;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by drewwilson on 20/11/2017.
  */
-public class SortingRangeContainer implements RangeContainer {
+public class BinarySearchRangeContainer implements RangeContainer {
     //@Contended
     private final short[] sortedKeys;
     //@Contended
@@ -26,11 +26,13 @@ public class SortingRangeContainer implements RangeContainer {
     private final long topLimit;
     private final MyHandler bottomHandler = new MyHandler(false);
     private final MyHandler topHandler = new MyHandler(true);
-    private final BetterIds ids = new BetterIds();
+    private final BinarySearchIds ids = new BinarySearchIds();
     private final Thread thread;
+    private final long[] data;
 
 
-    public SortingRangeContainer(long[] data) {
+    public BinarySearchRangeContainer(long[] data) {
+        this.data = data;
         output = new short[data.length];
         thread = Thread.currentThread();
         List<Pair<Long, Short>> sorted = new ArrayList<>(data.length);
@@ -79,6 +81,13 @@ public class SortingRangeContainer implements RangeContainer {
         {
             // we are out of range, so tell them!
             return EmptyRange.getInstance();
+        }
+
+        long max = Math.min(topLimit, toValue);
+        long min = Math.max(bottomLimit, fromValue);
+        long half = (topLimit - bottomLimit) / 2;
+        if(max - min > half) {
+            return new ScanningIds(fromValue, toValue, fromInclusive, toInclusive, data);
         }
 
         bottomHandler.setValue(fromValue, fromInclusive);

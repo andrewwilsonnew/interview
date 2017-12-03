@@ -12,7 +12,7 @@ public class SimpleRangeContainer implements RangeContainer {
         this.data = data;
     }
 
-    public SimpleIds findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
-        return new SimpleIds(fromValue, toValue, fromInclusive, toInclusive, data);
+    public ScanningIds findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
+        return new ScanningIds(fromValue, toValue, fromInclusive, toInclusive, data);
     }
 }

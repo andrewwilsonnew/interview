@@ -3,9 +3,7 @@ package com.workday;
 import com.workday.interview.Ids;
 import com.workday.interview.RangeContainer;
 import com.workday.interview.andrewwilson.SimpleRangeContainer;
-import com.workday.interview.andrewwilson.better.SortingRangeContainer;
-
-import java.util.Random;
+import com.workday.interview.andrewwilson.better.BinarySearchRangeContainer;
 
 /**
  * Created by drewwilson on 22/11/2017.
@@ -23,7 +21,7 @@ public class PerformanceTest {
             System.out.println(data[i]);
         }
 
-        RangeContainer[] handlers = { new SimpleRangeContainer(data), new SortingRangeContainer(data)};
+        RangeContainer[] handlers = { new SimpleRangeContainer(data), new BinarySearchRangeContainer(data)};
         long results[][] = new long[handlers.length][11];
 
         int count = 0;

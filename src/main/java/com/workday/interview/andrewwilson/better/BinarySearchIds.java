@@ -5,13 +5,13 @@ import com.workday.interview.Ids;
 /**
  * Created by drewwilson on 20/11/2017.
  */
-public class BetterIds implements Ids {
+public class BinarySearchIds implements Ids {
     private short[] output;
     private int end;
     private int offset;
     private boolean copy;
 
-    BetterIds() {
+    BinarySearchIds() {
     }
 
     void setValues(short[] output, int begin, int end, boolean copy) {

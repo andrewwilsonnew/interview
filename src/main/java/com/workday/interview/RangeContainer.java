@@ -1,7 +1,5 @@
 package com.workday.interview;
 
-import com.workday.interview.andrewwilson.SimpleIds;
-
 /**
  * a specialized container of records optimized for efficient range queries
  * on an attribute of the data.

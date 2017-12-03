@@ -5,7 +5,7 @@ import com.workday.interview.Ids;
 /**
  * Created by drewwilson on 19/11/2017.
  */
-public class SimpleIds implements Ids {
+public class ScanningIds implements Ids {
     private final long fromValue;
     private final long toValue;
     private final boolean fromInclusive;
@@ -13,7 +13,7 @@ public class SimpleIds implements Ids {
     private long[] data;
     private short offset = -1;
 
-    public SimpleIds(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive, long[] data) {
+    public ScanningIds(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive, long[] data) {
         this.fromValue = fromValue;
         this.toValue = toValue;
         this.fromInclusive = fromInclusive;
