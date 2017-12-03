@@ -1,6 +1,7 @@
 package com.workday.interview.andrewwilson.binarySearch;
 
 import com.workday.interview.Ids;
+import com.workday.interview.andrewwilson.combining.CombiningRangeContainer;
 
 /**
  * This is for returning ranges.
@@ -12,7 +13,7 @@ public class BinarySearchIds implements Ids {
     private int offset;
     private boolean copy;
     private final Thread owningThread;
-    private final boolean checkThreadEachTime = false;
+    private final boolean checkThreadEachTime = true;
 
     BinarySearchIds() {
         owningThread = Thread.currentThread();
@@ -27,10 +28,8 @@ public class BinarySearchIds implements Ids {
 
     @Override
     public short nextId() {
-        if(checkThreadEachTime && !Thread.currentThread().equals(owningThread)) {
-            throw new IllegalThreadStateException("Caller thread " + Thread.currentThread() + " is not creating thread " + owningThread);
-        }
         if(offset > end) { return -1; }
+        if(checkThreadEachTime && CombiningRangeContainer.checkThread(owningThread)) {}
         return output[offset++];
     }
 

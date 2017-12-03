@@ -43,15 +43,16 @@ public class CombiningRangeContainerTest extends BinarySearchRangeContainerTest 
 
     @Test public void testSecondThreadCannotAccessFirst() throws InterruptedException {
         final RangeContainer rangeContainer = getRangeContainer(SAMPLE_DATA);
+        msg = null;
         Thread thread = new Thread(() -> {
             try {
                 rangeContainer.findIdsInRange(1, 1, true, true);
-                Assert.fail("We should not reach this statement since different threads cannot access");
-            } catch (IllegalThreadStateException e) {
-            } // expected
+                msg = "We should not reach this statement since different threads cannot access";
+            } catch (IllegalThreadStateException e) {} // expected
         });
         thread.start();
         thread.join();
+        assertEquals(null, msg);
     }
 
     @Test public void TwoThreadsCanWorkAtTheSameTime() {
@@ -61,16 +62,21 @@ public class CombiningRangeContainerTest extends BinarySearchRangeContainerTest 
     @Test public void HarshCheckingThreadsFailsCorrectly() throws InterruptedException {
         final RangeContainer rangeContainer = getRangeContainer(SAMPLE_DATA);
         Ids idsInRange = rangeContainer.findIdsInRange(1, 1, true, true);
+        msg =  null;
         Thread thread = new Thread(() -> {
             try {
                 idsInRange.nextId();
-                Assert.fail("We should not reach this statement since different threads cannot access");
-            } catch (IllegalThreadStateException e) {
-            } // expected
+                msg = "We should not reach this statement since different threads cannot access 2";
+            } catch (IllegalThreadStateException e) {} // expected
         });
         thread.start();
         thread.join();
+        assertEquals(null, msg);
     }
+
+    private String msg;
+
+    private synchronized void setMessage(String msg) { this.msg = msg; }
 
     @Test public void testBelowRange() {
         assertEquals("Below range should return Empty Range", EmptyIds.class, rc.findIdsInRange(0,1,true,true).getClass() );

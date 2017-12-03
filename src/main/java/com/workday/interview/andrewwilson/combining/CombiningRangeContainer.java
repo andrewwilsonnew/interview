@@ -7,6 +7,7 @@ import com.workday.interview.andrewwilson.empty.EmptyIds;
 import com.workday.interview.andrewwilson.scanning.ScanningRangeContainer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.log4j.Logger;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *  Handles threading.
  */
 public class CombiningRangeContainer implements RangeContainer {
+    public static final Logger LOG = Logger.getLogger(CombiningRangeContainer.class);
+
     private final Map<Thread, Pair<BinarySearchRangeContainer, ScanningRangeContainer>> threadPairMap = new ConcurrentHashMap<>();
     private final long[] data;
 
@@ -37,6 +40,10 @@ public class CombiningRangeContainer implements RangeContainer {
                 k -> new ImmutablePair<>(new BinarySearchRangeContainer(data), new ScanningRangeContainer(data)));
 
         // @todo we could warn here if the pool gets too large, which suggests large thread usage.
+        // I'd prefer to throw an Exception, but we probably need to keep going in a PROD situation.
+        if(threadPairMap.size() * 2 > Runtime.getRuntime().availableProcessors()) {
+            LOG.error("Range Container is being used incorrectly and probably leaking");
+        }
 
         BinarySearchRangeContainer binarySearchRangeContainer = pair.getLeft();
 
@@ -45,8 +52,15 @@ public class CombiningRangeContainer implements RangeContainer {
         }
 
         RangeContainer rangeContainer = binarySearchRangeContainer.worthUsing(fromValue,toValue) ?
-                binarySearchRangeContainer : pair.getRight();
+                binarySearchRangeContainer : pair.getRight();  // otherwise use the Scanner.
 
         return rangeContainer.findIdsInRange(fromValue, toValue, fromInclusive, toInclusive);
+    }
+
+    public static boolean checkThread(Thread owningThread) {
+        if(!Thread.currentThread().equals(owningThread)) {
+            throw new IllegalThreadStateException("Caller thread " + Thread.currentThread() + " is not creating thread " + owningThread);
+        }
+        return true;
     }
 }

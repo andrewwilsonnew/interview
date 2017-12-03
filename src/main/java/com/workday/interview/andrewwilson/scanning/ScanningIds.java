@@ -1,6 +1,7 @@
 package com.workday.interview.andrewwilson.scanning;
 
 import com.workday.interview.Ids;
+import com.workday.interview.andrewwilson.combining.CombiningRangeContainer;
 
 /**
  * Very simple solution, just scan through.
@@ -30,9 +31,7 @@ public class ScanningIds implements Ids {
 
     @Override
     public short nextId() {
-        if(checkThreadEachTime && !Thread.currentThread().equals(owningThread)) {
-            throw new IllegalThreadStateException("Caller thread " + Thread.currentThread() + " is not creating thread " + owningThread);
-        }
+        if(checkThreadEachTime && CombiningRangeContainer.checkThread(owningThread)) {}
         while(++offset < data.length) {
             long value = data[offset];
             boolean lowerRange = fromInclusive ? value >= fromValue : value > fromValue;
