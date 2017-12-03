@@ -12,8 +12,11 @@ public class ScanningIds implements Ids {
     private boolean toInclusive;
     private long[] data;
     private short offset;
+    private final Thread owningThread;
+    private final boolean checkThreadEachTime = false;
 
     public ScanningIds(long[] data) {
+        owningThread = Thread.currentThread();
         this.data = data;
     }
 
@@ -27,6 +30,9 @@ public class ScanningIds implements Ids {
 
     @Override
     public short nextId() {
+        if(checkThreadEachTime && !Thread.currentThread().equals(owningThread)) {
+            throw new IllegalThreadStateException("Caller thread " + Thread.currentThread() + " is not creating thread " + owningThread);
+        }
         while(++offset < data.length) {
             long value = data[offset];
             boolean lowerRange = fromInclusive ? value >= fromValue : value > fromValue;

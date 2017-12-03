@@ -2,7 +2,6 @@ package com.workday.interview.andrewwilson.binarySearch;
 
 import com.workday.interview.Ids;
 import com.workday.interview.RangeContainer;
-import com.workday.interview.andrewwilson.empty.EmptyIds;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
@@ -78,13 +77,7 @@ public class BinarySearchRangeContainer implements RangeContainer {
     @Override
     public Ids findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
 
-        if(     (fromInclusive ? fromValue > topLimit : fromValue >= topLimit) || // we are over the topLimit
-                (toInclusive ? toValue < bottomLimit : toValue <= bottomLimit) || // we are below the bottomLimit
-                ( toInclusive && fromInclusive ? fromValue > toValue : fromValue >= toValue ))  // ranges don't overlap
-        {
-            // we are out of range, so tell them!
-            return EmptyIds.getInstance();
-        }
+
 
         bottomHandler.setValue(fromValue, fromInclusive);
         topHandler.setValue(toValue,toInclusive);
@@ -104,6 +97,12 @@ public class BinarySearchRangeContainer implements RangeContainer {
             ids.setValues(sortedKeys, left, right, false);
         }
         return ids;
+    }
+
+    public boolean useEmpty(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
+        return  (fromInclusive ? fromValue > topLimit : fromValue >= topLimit) || // we are over the topLimit
+                (toInclusive ? toValue < bottomLimit : toValue <= bottomLimit) || // we are below the bottomLimit
+                ( toInclusive && fromInclusive ? fromValue > toValue : fromValue >= toValue );  // ranges don't overlap
     }
 
     public class BinaryHandler {
