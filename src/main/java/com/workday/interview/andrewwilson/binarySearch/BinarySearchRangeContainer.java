@@ -2,6 +2,7 @@ package com.workday.interview.andrewwilson.binarySearch;
 
 import com.workday.interview.Ids;
 import com.workday.interview.RangeContainer;
+import com.workday.interview.andrewwilson.empty.EmptyIds;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
@@ -27,8 +28,8 @@ public class BinarySearchRangeContainer implements RangeContainer {
 
     private final long bottomLimit;
     private final long topLimit;
-    private final MyHandler bottomHandler = new MyHandler(false);
-    private final MyHandler topHandler = new MyHandler(true);
+    private final BinaryHandler bottomHandler = new BinaryHandler(false);
+    private final BinaryHandler topHandler = new BinaryHandler(true);
     private final BinarySearchIds ids = new BinarySearchIds();
     private final Thread thread;
 
@@ -88,7 +89,7 @@ public class BinarySearchRangeContainer implements RangeContainer {
                 ( toInclusive && fromInclusive ? fromValue > toValue : fromValue >= toValue ))  // ranges don't overlap
         {
             // we are out of range, so tell them!
-            return EmptyRange.getInstance();
+            return EmptyIds.getInstance();
         }
 
         bottomHandler.setValue(fromValue, fromInclusive);
@@ -111,14 +112,14 @@ public class BinarySearchRangeContainer implements RangeContainer {
         return ids;
     }
 
-    public class MyHandler {
+    public class BinaryHandler {
         private long value;
         private final boolean isTop;
         private boolean include;
         private int bottomOffset;
         private int topOffset;
 
-        public MyHandler(boolean isTop) {
+        public BinaryHandler(boolean isTop) {
             this.isTop = isTop;
         }
 

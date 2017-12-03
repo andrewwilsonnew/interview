@@ -29,7 +29,7 @@ public class BinarySearchIds implements Ids {
     }
 
     /**
-     * @todo this is really a testing method and smells a bit, but refactored from public.
+     * this is really a testing method and smells a bit, but refactored from public.
      */
     protected boolean isCopy() { return copy; }
 }

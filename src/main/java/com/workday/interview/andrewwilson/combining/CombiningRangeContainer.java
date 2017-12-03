@@ -6,7 +6,7 @@ import com.workday.interview.andrewwilson.binarySearch.BinarySearchRangeContaine
 import com.workday.interview.andrewwilson.scanning.ScanningRangeContainer;
 
 /**
- * Choose whether to use the BinarySearch or Scanning container.
+ * Choose whether to use the BinarySearch or Scanning container and also handle threads.
  */
 public class CombiningRangeContainer implements RangeContainer {
 
