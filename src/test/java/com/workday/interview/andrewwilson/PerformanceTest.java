@@ -6,13 +6,11 @@ import com.workday.interview.andrewwilson.binarySearch.BinarySearchRangeContaine
 import com.workday.interview.andrewwilson.combining.CombiningRangeContainer;
 import com.workday.interview.andrewwilson.scanning.ScanningRangeContainer;
 import org.apache.log4j.Logger;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Created by drewwilson on 22/11/2017.
+ * Performance Test for Suite.  Would consider using JMH.
  */
-@Ignore
 public class PerformanceTest {
     public static final Logger LOGGER = Logger.getLogger(PerformanceTest.class);
 
@@ -23,13 +21,12 @@ public class PerformanceTest {
         for(int i=0;i<data.length;i++) {
             // Chose this explicitly, so we get a good normal range.
             data[i] = (long)(Short.MIN_VALUE + (Math.random()*2*Short.MAX_VALUE));
-            System.out.println(data[i]);
         }
 
         RangeContainer[] handlers = {
-                new ScanningRangeContainer(data),
-                new BinarySearchRangeContainer(data),
-                new CombiningRangeContainer(data)};
+                new ScanningRangeContainer(data, false),
+                new BinarySearchRangeContainer(data, false),
+                new CombiningRangeContainer(data,false)};
         long results[][] = new long[handlers.length][11];
 
         int count = 0;
@@ -38,7 +35,6 @@ public class PerformanceTest {
             for(int handler=0;handler<handlers.length;handler++) {
                 long start = System.currentTimeMillis();
                 long finish = Short.MIN_VALUE + (((long)Short.MAX_VALUE)-((long)Short.MIN_VALUE))*range/10;
-                System.out.println(finish);
                 for(int loopCount=0;loopCount<10000;loopCount++) {
                     Ids idsInRange = handlers[handler].findIdsInRange(Short.MIN_VALUE, finish, true, true);
                     while (idsInRange.nextId() != -1) {

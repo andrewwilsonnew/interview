@@ -13,9 +13,10 @@ public class BinarySearchIds implements Ids {
     private int offset;
     private boolean copy;
     private final Thread owningThread;
-    private final boolean checkThreadEachTime = true;
+    private final boolean checkThreadEachTime;
 
-    BinarySearchIds() {
+    BinarySearchIds(boolean checkThreadEachTime) {
+        this.checkThreadEachTime = checkThreadEachTime;
         owningThread = Thread.currentThread();
     }
 
@@ -29,7 +30,7 @@ public class BinarySearchIds implements Ids {
     @Override
     public short nextId() {
         if(offset > end) { return -1; }
-        if(checkThreadEachTime && CombiningRangeContainer.checkThread(owningThread)) {}
+        if(checkThreadEachTime && CombiningRangeContainer.checkThread(owningThread)) {} // dont do this every time for performance.
         return output[offset++];
     }
 

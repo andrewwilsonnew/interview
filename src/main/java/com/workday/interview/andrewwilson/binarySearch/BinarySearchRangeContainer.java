@@ -29,10 +29,11 @@ public class BinarySearchRangeContainer implements RangeContainer {
     private final long topLimit;
     private final BinaryHandler bottomHandler = new BinaryHandler(false);
     private final BinaryHandler topHandler = new BinaryHandler(true);
-    private final BinarySearchIds ids = new BinarySearchIds();
+    private final BinarySearchIds ids;
 
 
-    public BinarySearchRangeContainer(long[] data) {
+    public BinarySearchRangeContainer(long[] data, boolean checkThreadEachTime) {
+        ids = new BinarySearchIds(checkThreadEachTime);
         output = new short[data.length];
         List<Pair<Long, Short>> sorted = new ArrayList<>(data.length);
         for(short i=0;i<data.length;i++) {

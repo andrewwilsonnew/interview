@@ -26,8 +26,10 @@ public class CombiningRangeContainer implements RangeContainer {
 
     private final Map<Thread, Pair<BinarySearchRangeContainer, ScanningRangeContainer>> threadPairMap = new ConcurrentHashMap<>();
     private final long[] data;
+    private final boolean checkThreadEachTime;
 
-    public CombiningRangeContainer(long[] data) {
+    public CombiningRangeContainer(long[] data, boolean checkThreadEachTime) {
+        this.checkThreadEachTime = checkThreadEachTime;
         if(data.length > Short.MAX_VALUE) {
             throw new ArrayIndexOutOfBoundsException("Data has length greater than 32K : " + data.length);
         }
@@ -37,7 +39,7 @@ public class CombiningRangeContainer implements RangeContainer {
     @Override
     public Ids findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
         Pair<BinarySearchRangeContainer, ScanningRangeContainer> pair = threadPairMap.computeIfAbsent(Thread.currentThread(),
-                k -> new ImmutablePair<>(new BinarySearchRangeContainer(data), new ScanningRangeContainer(data)));
+                k -> new ImmutablePair<>(new BinarySearchRangeContainer(data, checkThreadEachTime), new ScanningRangeContainer(data, checkThreadEachTime)));
 
         // @todo we could warn here if the pool gets too large, which suggests large thread usage.
         // I'd prefer to throw an Exception, but we probably need to keep going in a PROD situation.

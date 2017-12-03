@@ -8,8 +8,8 @@ import com.workday.interview.RangeContainer;
 public class ScanningRangeContainer implements RangeContainer {
     private final ScanningIds ids;
 
-    public ScanningRangeContainer(long[] data) {
-        this.ids = new ScanningIds(data);
+    public ScanningRangeContainer(long[] data, boolean checkThreadEachTime) {
+        this.ids = new ScanningIds(data, checkThreadEachTime);
     }
 
     public ScanningIds findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {

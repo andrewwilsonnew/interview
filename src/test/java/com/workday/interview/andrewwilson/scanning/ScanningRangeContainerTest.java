@@ -10,6 +10,6 @@ public class ScanningRangeContainerTest extends AbstractRangeContainerTest {
 
     @Override
     protected RangeContainer getRangeContainer(long[] data) {
-        return new ScanningRangeContainer(data);
+        return new ScanningRangeContainer(data, true);
     }
 }

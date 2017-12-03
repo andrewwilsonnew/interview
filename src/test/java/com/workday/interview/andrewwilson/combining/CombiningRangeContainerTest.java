@@ -6,10 +6,12 @@ import com.workday.interview.andrewwilson.binarySearch.BinarySearchIds;
 import com.workday.interview.andrewwilson.binarySearch.BinarySearchRangeContainerTest;
 import com.workday.interview.andrewwilson.empty.EmptyIds;
 import com.workday.interview.andrewwilson.scanning.ScanningIds;
-import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.concurrent.*;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Explicit choice to extend BinarySearchRangeContainerTest - this should do everything and more.
@@ -18,7 +20,7 @@ public class CombiningRangeContainerTest extends BinarySearchRangeContainerTest 
 
     @Override
     protected RangeContainer getRangeContainer(long[] data) {
-        return new CombiningRangeContainer(data);
+        return new CombiningRangeContainer(data,true);
     }
 
     /**
@@ -41,42 +43,22 @@ public class CombiningRangeContainerTest extends BinarySearchRangeContainerTest 
         getRangeContainer(new long[Short.MAX_VALUE+1]);
     }
 
-    @Test public void testSecondThreadCannotAccessFirst() throws InterruptedException {
+    @Test public void TwoThreadsShouldGetDifferentInstances() throws InterruptedException, ExecutionException, TimeoutException {
         final RangeContainer rangeContainer = getRangeContainer(SAMPLE_DATA);
-        msg = null;
-        Thread thread = new Thread(() -> {
-            try {
-                rangeContainer.findIdsInRange(1, 1, true, true);
-                msg = "We should not reach this statement since different threads cannot access";
-            } catch (IllegalThreadStateException e) {} // expected
-        });
-        thread.start();
-        thread.join();
-        assertEquals(null, msg);
-    }
-
-    @Test public void TwoThreadsCanWorkAtTheSameTime() {
+        Ids ids = rangeContainer.findIdsInRange(0, 20, true, true);
+        Future<?> submit = Executors.newCachedThreadPool().submit(() -> rangeContainer.findIdsInRange(0, 20, true, true));
+        Ids o = (Ids) submit.get(10, TimeUnit.SECONDS);
+        assertFalse("Should be different", o.equals(ids));
 
     }
 
-    @Test public void HarshCheckingThreadsFailsCorrectly() throws InterruptedException {
+    @Test(expected = ExecutionException.class)
+    public void HarshCheckingThreadsFailsCorrectly() throws InterruptedException, TimeoutException, ExecutionException {
         final RangeContainer rangeContainer = getRangeContainer(SAMPLE_DATA);
-        Ids idsInRange = rangeContainer.findIdsInRange(1, 1, true, true);
-        msg =  null;
-        Thread thread = new Thread(() -> {
-            try {
-                idsInRange.nextId();
-                msg = "We should not reach this statement since different threads cannot access 2";
-            } catch (IllegalThreadStateException e) {} // expected
-        });
-        thread.start();
-        thread.join();
-        assertEquals(null, msg);
+        final Ids idsInRange = rangeContainer.findIdsInRange(1, 20, true, true);
+        Future<?> submit = Executors.newCachedThreadPool().submit(() -> idsInRange.nextId());
+        Ids o = (Ids) submit.get(10, TimeUnit.SECONDS);
     }
-
-    private String msg;
-
-    private synchronized void setMessage(String msg) { this.msg = msg; }
 
     @Test public void testBelowRange() {
         assertEquals("Below range should return Empty Range", EmptyIds.class, rc.findIdsInRange(0,1,true,true).getClass() );

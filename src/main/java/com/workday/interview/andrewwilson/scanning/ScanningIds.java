@@ -14,9 +14,10 @@ public class ScanningIds implements Ids {
     private long[] data;
     private short offset;
     private final Thread owningThread;
-    private final boolean checkThreadEachTime = false;
+    private final boolean checkThreadEachTime;
 
-    public ScanningIds(long[] data) {
+    ScanningIds(long[] data, boolean checkThreadEachTime) {
+        this.checkThreadEachTime = checkThreadEachTime;
         owningThread = Thread.currentThread();
         this.data = data;
     }
@@ -31,7 +32,7 @@ public class ScanningIds implements Ids {
 
     @Override
     public short nextId() {
-        if(checkThreadEachTime && CombiningRangeContainer.checkThread(owningThread)) {}
+        if(checkThreadEachTime && CombiningRangeContainer.checkThread(owningThread)) {} // don't do this every time for performance.
         while(++offset < data.length) {
             long value = data[offset];
             boolean lowerRange = fromInclusive ? value >= fromValue : value > fromValue;
