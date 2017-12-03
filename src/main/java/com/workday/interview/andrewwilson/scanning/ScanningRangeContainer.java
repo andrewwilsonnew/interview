@@ -1,14 +1,14 @@
-package com.workday.interview.andrewwilson;
+package com.workday.interview.andrewwilson.scanning;
 
 import com.workday.interview.RangeContainer;
 
 /**
  * Created by drewwilson on 19/11/2017.
  */
-public class SimpleRangeContainer implements RangeContainer {
+public class ScanningRangeContainer implements RangeContainer {
     private long[] data;
 
-    public SimpleRangeContainer(long[] data) {
+    public ScanningRangeContainer(long[] data) {
         this.data = data;
     }
 

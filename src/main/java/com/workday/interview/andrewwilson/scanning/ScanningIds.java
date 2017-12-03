@@ -1,4 +1,4 @@
-package com.workday.interview.andrewwilson;
+package com.workday.interview.andrewwilson.scanning;
 
 import com.workday.interview.Ids;
 

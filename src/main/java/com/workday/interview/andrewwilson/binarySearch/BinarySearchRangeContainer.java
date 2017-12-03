@@ -1,8 +1,7 @@
-package com.workday.interview.andrewwilson.better;
+package com.workday.interview.andrewwilson.binarySearch;
 
 import com.workday.interview.Ids;
 import com.workday.interview.RangeContainer;
-import com.workday.interview.andrewwilson.ScanningIds;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -28,11 +27,9 @@ public class BinarySearchRangeContainer implements RangeContainer {
     private final MyHandler topHandler = new MyHandler(true);
     private final BinarySearchIds ids = new BinarySearchIds();
     private final Thread thread;
-    private final long[] data;
 
 
     public BinarySearchRangeContainer(long[] data) {
-        this.data = data;
         output = new short[data.length];
         thread = Thread.currentThread();
         List<Pair<Long, Short>> sorted = new ArrayList<>(data.length);
@@ -69,8 +66,16 @@ public class BinarySearchRangeContainer implements RangeContainer {
         topLimit = sortedValues[data.length-1];
     }
 
+    public boolean worthUsing(long fromValue, long toValue) {
+        long max = Math.min(topLimit, toValue);
+        long min = Math.max(bottomLimit, fromValue);
+        long half = (topLimit - bottomLimit) / 2;
+        return (max - min < half);
+    }
+
     @Override
     public Ids findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
+
         if(!Thread.currentThread().equals(thread)) {
             throw new IllegalThreadStateException("Can only be used by a single thread for performance reasons");
         }
@@ -81,13 +86,6 @@ public class BinarySearchRangeContainer implements RangeContainer {
         {
             // we are out of range, so tell them!
             return EmptyRange.getInstance();
-        }
-
-        long max = Math.min(topLimit, toValue);
-        long min = Math.max(bottomLimit, fromValue);
-        long half = (topLimit - bottomLimit) / 2;
-        if(max - min > half) {
-            return new ScanningIds(fromValue, toValue, fromInclusive, toInclusive, data);
         }
 
         bottomHandler.setValue(fromValue, fromInclusive);

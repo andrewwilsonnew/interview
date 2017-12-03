@@ -1,4 +1,4 @@
-package com.workday.interview.andrewwilson.better;
+package com.workday.interview.andrewwilson.binarySearch;
 
 import com.workday.interview.Ids;
 

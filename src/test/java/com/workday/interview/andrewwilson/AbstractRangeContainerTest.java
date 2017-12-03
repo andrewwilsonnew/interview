@@ -1,15 +1,12 @@
-package com.workday.interview;
+package com.workday.interview.andrewwilson;
 
-import com.workday.interview.andrewwilson.YourRangeContainerFactory;
-import com.workday.interview.andrewwilson.better.BinarySearchIds;
-import com.workday.interview.andrewwilson.better.EmptyRange;
-import org.junit.BeforeClass;
+import com.workday.interview.Ids;
+import com.workday.interview.RangeContainer;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -21,15 +18,12 @@ import static org.junit.Assert.assertFalse;
  * I like my solution, it respects the ranges and does what it needs to do.
  * Now lets optimise it.  Java - prof probably the best way to start.
  */
-public class BetterUnitTest {
-    private static RangeContainer rc;
-    private static RangeContainerFactory rf;
+public abstract class AbstractRangeContainerTest {
+    protected static final long[] SAMPLE_DATA = new long[]{2,21,10,13,14,13,14,12,17,21,2,15,16,17,16,17,2,21};
 
-    @BeforeClass
-    public static void setUp(){
-        rf = new YourRangeContainerFactory();
-        rc = rf.createContainer(new long[]{2,21,10,13,14,13,14,12,17,21,2,15,16,17,16,17,2,21}) ;
-    }
+    protected RangeContainer rc = getRangeContainer(SAMPLE_DATA);
+
+    protected abstract RangeContainer getRangeContainer(long[] data);
 
     @Test public void testRangeFalseFalse() {
         assertEquals(createShortList(11,12,14), findIdsInRange(14, 17, false, false));
@@ -51,32 +45,16 @@ public class BetterUnitTest {
         assertEquals(createShortList(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17), findIdsInRange(0,22,true, true));
     }
 
-    @Test public void testBelowRange() {
-        assertTrue(rc.findIdsInRange(0,1,true,true) instanceof EmptyRange);
-    }
-
-    @Test public void testAboveRange() {
-        assertTrue(rc.findIdsInRange(23,24,true,true) instanceof EmptyRange);
-    }
-
-    @Test public void testWrongWayRound() {
-        assertTrue(rc.findIdsInRange(16,15,true,true) instanceof EmptyRange);
-    }
-
-    @Test public void testSingleValueShouldNotCopy() {
-        assertFalse(((BinarySearchIds)rc.findIdsInRange(16,16,true,true)).isCopy());
-    }
-
     @Test public void testMinValue() {
-        assertEquals(createShortList(0), findIdsInRange(rf.createContainer(new long[] { Long.MIN_VALUE } ),Long.MIN_VALUE, Long.MIN_VALUE, true, true));
+        assertEquals(createShortList(0), findIdsInRange(getRangeContainer(new long[] { Long.MIN_VALUE } ),Long.MIN_VALUE, Long.MIN_VALUE, true, true));
     }
 
     @Test public void testMaxValue() {
-        assertEquals(createShortList(0), findIdsInRange(rf.createContainer(new long[] { Long.MAX_VALUE } ), Long.MAX_VALUE, Long.MAX_VALUE, true, true));
+        assertEquals(createShortList(0), findIdsInRange(getRangeContainer(new long[] { Long.MAX_VALUE } ), Long.MAX_VALUE, Long.MAX_VALUE, true, true));
     }
 
     @Test public void testNegatives() {
-        assertEquals(createShortList(0,2,3,5,6,7), findIdsInRange(rf.createContainer(new long[] {-1,3,-2,1,-3,1,2,-2,-3,Long.MIN_VALUE, Long.MAX_VALUE}), -2,2,true,true));
+        assertEquals(createShortList(0,2,3,5,6,7), findIdsInRange(getRangeContainer(new long[] {-1,3,-2,1,-3,1,2,-2,-3,Long.MIN_VALUE, Long.MAX_VALUE}), -2,2,true,true));
     }
 
     private List<Short> findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
