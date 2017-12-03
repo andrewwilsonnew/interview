@@ -4,6 +4,7 @@ import com.workday.interview.RangeContainer;
 import com.workday.interview.andrewwilson.binarySearch.BinarySearchIds;
 import com.workday.interview.andrewwilson.binarySearch.BinarySearchRangeContainerTest;
 import com.workday.interview.andrewwilson.scanning.ScanningIds;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -36,5 +37,16 @@ public class CombiningRangeContainerTest extends BinarySearchRangeContainerTest 
     @Test(expected=ArrayIndexOutOfBoundsException.class)
     public void greaterThan32KFails() {
         getRangeContainer(new long[Short.MAX_VALUE+1]);
+    }
+
+    @Test public void testSecondThreadCannotAccessFirst() throws InterruptedException {
+        final RangeContainer rangeContainer = getRangeContainer(SAMPLE_DATA);
+        new Thread(() -> {
+            try {
+                rangeContainer.findIdsInRange(1, 1, true, true);
+                Assert.fail("We should not reach this statement since different threads cannot access");
+            } catch(IllegalThreadStateException e) {} // expected
+        }).start();
+
     }
 }

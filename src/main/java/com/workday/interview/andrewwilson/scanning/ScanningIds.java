@@ -6,19 +6,23 @@ import com.workday.interview.Ids;
  * Very simple solution, just scan through.
  */
 public class ScanningIds implements Ids {
-    private final long fromValue;
-    private final long toValue;
-    private final boolean fromInclusive;
-    private final boolean toInclusive;
+    private long fromValue;
+    private long toValue;
+    private boolean fromInclusive;
+    private boolean toInclusive;
     private long[] data;
-    private short offset = -1;
+    private short offset;
 
-    public ScanningIds(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive, long[] data) {
+    public ScanningIds(long[] data) {
+        this.data = data;
+    }
+
+    protected void setValues(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
         this.fromValue = fromValue;
         this.toValue = toValue;
         this.fromInclusive = fromInclusive;
         this.toInclusive = toInclusive;
-        this.data = data;
+        offset = -1;
     }
 
     @Override

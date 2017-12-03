@@ -6,13 +6,14 @@ import com.workday.interview.RangeContainer;
  * Very simple scanning container.
  */
 public class ScanningRangeContainer implements RangeContainer {
-    private long[] data;
+    private final ScanningIds ids;
 
     public ScanningRangeContainer(long[] data) {
-        this.data = data;
+        this.ids = new ScanningIds(data);
     }
 
     public ScanningIds findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
-        return new ScanningIds(fromValue, toValue, fromInclusive, toInclusive, data);
+        ids.setValues(fromValue, toValue, fromInclusive, toInclusive);
+        return ids;
     }
 }

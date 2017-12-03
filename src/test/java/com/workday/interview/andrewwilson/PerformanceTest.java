@@ -12,6 +12,7 @@ import org.junit.Test;
 /**
  * Created by drewwilson on 22/11/2017.
  */
+@Ignore
 public class PerformanceTest {
     public static final Logger LOGGER = Logger.getLogger(PerformanceTest.class);
 

@@ -3,6 +3,7 @@ package com.workday.interview.andrewwilson.binarySearch;
 import com.workday.interview.RangeContainer;
 import com.workday.interview.andrewwilson.AbstractRangeContainerTest;
 import com.workday.interview.andrewwilson.empty.EmptyIds;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

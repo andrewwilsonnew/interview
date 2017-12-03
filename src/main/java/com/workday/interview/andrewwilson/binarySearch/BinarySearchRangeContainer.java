@@ -31,12 +31,10 @@ public class BinarySearchRangeContainer implements RangeContainer {
     private final BinaryHandler bottomHandler = new BinaryHandler(false);
     private final BinaryHandler topHandler = new BinaryHandler(true);
     private final BinarySearchIds ids = new BinarySearchIds();
-    private final Thread thread;
 
 
     public BinarySearchRangeContainer(long[] data) {
         output = new short[data.length];
-        thread = Thread.currentThread();
         List<Pair<Long, Short>> sorted = new ArrayList<>(data.length);
         for(short i=0;i<data.length;i++) {
             sorted.add(new ImmutablePair<>(data[i], i));
@@ -79,10 +77,6 @@ public class BinarySearchRangeContainer implements RangeContainer {
 
     @Override
     public Ids findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
-
-        if(!Thread.currentThread().equals(thread)) {
-            throw new IllegalThreadStateException("Can only be used by a single thread for performance reasons");
-        }
 
         if(     (fromInclusive ? fromValue > topLimit : fromValue >= topLimit) || // we are over the topLimit
                 (toInclusive ? toValue < bottomLimit : toValue <= bottomLimit) || // we are below the bottomLimit
