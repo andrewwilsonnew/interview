@@ -27,6 +27,7 @@ public class CombiningRangeContainer implements RangeContainer {
     private final Map<Thread, Pair<BinarySearchRangeContainer, ScanningRangeContainer>> threadPairMap = new ConcurrentHashMap<>();
     private final long[] data;
     private final boolean checkThreadEachTime;
+    private boolean isWarnedThreadUsage;
 
     public CombiningRangeContainer(long[] data, boolean checkThreadEachTime) {
         this.checkThreadEachTime = checkThreadEachTime;
@@ -43,8 +44,9 @@ public class CombiningRangeContainer implements RangeContainer {
 
         // @todo we could warn here if the pool gets too large, which suggests large thread usage.
         // I'd prefer to throw an Exception, but we probably need to keep going in a PROD situation.
-        if(threadPairMap.size() * 2 > Runtime.getRuntime().availableProcessors()) {
+        if(!isWarnedThreadUsage && threadPairMap.size() * 2 > Runtime.getRuntime().availableProcessors()) {
             LOG.error("Range Container is being used incorrectly and probably leaking");
+            isWarnedThreadUsage = true;
         }
 
         BinarySearchRangeContainer binarySearchRangeContainer = pair.getLeft();
