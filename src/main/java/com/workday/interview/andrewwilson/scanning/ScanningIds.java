@@ -3,7 +3,7 @@ package com.workday.interview.andrewwilson.scanning;
 import com.workday.interview.Ids;
 
 /**
- * Created by drewwilson on 19/11/2017.
+ * Very simple solution, just scan through.
  */
 public class ScanningIds implements Ids {
     private final long fromValue;

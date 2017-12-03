@@ -3,7 +3,7 @@ package com.workday.interview.andrewwilson.scanning;
 import com.workday.interview.RangeContainer;
 
 /**
- * Created by drewwilson on 19/11/2017.
+ * Very simple scanning container.
  */
 public class ScanningRangeContainer implements RangeContainer {
     private long[] data;

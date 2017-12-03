@@ -3,7 +3,8 @@ package com.workday.interview.andrewwilson.binarySearch;
 import com.workday.interview.Ids;
 
 /**
- * Created by drewwilson on 20/11/2017.
+ * This is for returning ranges.
+ * The range may be allocated directly (if sorted) or an offset from the original range and length.
  */
 public class BinarySearchIds implements Ids {
     private short[] output;
@@ -27,5 +28,8 @@ public class BinarySearchIds implements Ids {
         return output[offset++];
     }
 
-    public boolean isCopy() { return copy; }
+    /**
+     * @todo this is really a testing method and smells a bit, but refactored from public.
+     */
+    protected boolean isCopy() { return copy; }
 }

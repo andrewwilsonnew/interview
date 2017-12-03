@@ -1,9 +1,7 @@
-package com.workday.interview.andrewwilson;
+package com.workday.interview.andrewwilson.binarySearch;
 
 import com.workday.interview.RangeContainer;
-import com.workday.interview.andrewwilson.binarySearch.BinarySearchIds;
-import com.workday.interview.andrewwilson.binarySearch.BinarySearchRangeContainer;
-import com.workday.interview.andrewwilson.binarySearch.EmptyRange;
+import com.workday.interview.andrewwilson.AbstractRangeContainerTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

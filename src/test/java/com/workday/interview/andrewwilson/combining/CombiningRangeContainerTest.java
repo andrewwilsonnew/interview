@@ -1,8 +1,8 @@
-package com.workday.interview.andrewwilson;
+package com.workday.interview.andrewwilson.combining;
 
 import com.workday.interview.RangeContainer;
 import com.workday.interview.andrewwilson.binarySearch.BinarySearchIds;
-import com.workday.interview.andrewwilson.combining.CombiningRangeContainer;
+import com.workday.interview.andrewwilson.binarySearch.BinarySearchRangeContainerTest;
 import com.workday.interview.andrewwilson.scanning.ScanningIds;
 import org.junit.Test;
 
@@ -35,6 +35,6 @@ public class CombiningRangeContainerTest extends BinarySearchRangeContainerTest 
 
     @Test(expected=ArrayIndexOutOfBoundsException.class)
     public void greaterThan32KFails() {
-        getRangeContainer(new long[Short.MAX_VALUE+2]);
+        getRangeContainer(new long[Short.MAX_VALUE+1]);
     }
 }

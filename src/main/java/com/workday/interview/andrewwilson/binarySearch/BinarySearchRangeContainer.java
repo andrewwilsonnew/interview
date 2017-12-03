@@ -4,6 +4,7 @@ import com.workday.interview.Ids;
 import com.workday.interview.RangeContainer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,9 +12,12 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Created by drewwilson on 20/11/2017.
+ * This is the main work in the class, it is explained here
+ * https://junocube.atlassian.net/wiki/spaces/COH/pages/119635969/Interview
  */
 public class BinarySearchRangeContainer implements RangeContainer {
+    private static final Logger LOG = Logger.getLogger(BinarySearchRangeContainer.class);
+
     //@Contended
     private final short[] sortedKeys;
     //@Contended
@@ -51,7 +55,6 @@ public class BinarySearchRangeContainer implements RangeContainer {
                 }
             }
         });
-        //System.out.println(sorted);
 
         sortedKeys = new short[data.length];
         sortedValues = new long[data.length];
@@ -128,7 +131,7 @@ public class BinarySearchRangeContainer implements RangeContainer {
 
         public boolean next() {
             int testOffset = bottomOffset + (topOffset-bottomOffset)/2;
-            //System.out.println(bottomOffset + ":" + topOffset + ":" + testOffset + ":" + data[testOffset]+":"+value);
+            LOG.debug(bottomOffset + ":" + topOffset + ":" + testOffset + ":" + sortedValues[testOffset]+":"+value);
             if( include ? sortedValues[testOffset] >= value : sortedValues[testOffset] > value) {
                 topOffset = testOffset;
             } else {
