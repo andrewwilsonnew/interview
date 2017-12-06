@@ -126,7 +126,7 @@ public class BinarySearchRangeContainer implements RangeContainer {
 
         public boolean next() {
             int testOffset = bottomOffset + (topOffset-bottomOffset)/2;
-            LOG.debug(bottomOffset + ":" + topOffset + ":" + testOffset + ":" + sortedValues[testOffset]+":"+value);
+            if(LOG.isDebugEnabled()) { LOG.debug(bottomOffset + ":" + topOffset + ":" + testOffset + ":" + sortedValues[testOffset]+":"+value); }
             if( include ? sortedValues[testOffset] >= value : sortedValues[testOffset] > value) {
                 topOffset = testOffset;
             } else {
