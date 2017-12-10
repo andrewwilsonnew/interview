@@ -20,7 +20,7 @@ public class CombiningRangeContainerTest extends BinarySearchRangeContainerTest 
 
     @Override
     protected RangeContainer getRangeContainer(long[] data) {
-        return new CombiningRangeContainer(data,true,true,true,true);
+        return new CombiningRangeContainer(data,true,true,false,true);
     }
 
     /**
@@ -81,4 +81,14 @@ public class CombiningRangeContainerTest extends BinarySearchRangeContainerTest 
     public void testEmptyData() {
         new CombiningRangeContainer(new long[0]);
     }
+//
+//    @Test(expected = IllegalThreadStateException.class)
+//    public void testTooManyThreadException() {
+//        for(int i=0;i<Runtime.getRuntime().availableProcessors()*2;i++) {
+//            new Thread(() -> {
+//                System.out.println("Created");
+//                rc.findIdsInRange(2,3,true,true);
+//            }).start();
+//        }
+//    }
 }

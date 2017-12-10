@@ -28,7 +28,7 @@ public class CombiningRangeContainer implements RangeContainer {
     private final long[] data;
     private final boolean checkThreadEachTime;
     private final boolean exceptionOnTooManyThreads;
-    private final boolean checkResultFullyDrained;
+    private final boolean checkFullyDrainedOnceOnly;
     private final boolean useNio;
     private boolean isWarnedThreadUsage;
 
@@ -45,17 +45,17 @@ public class CombiningRangeContainer implements RangeContainer {
      * @param data - the original data
      * @param checkThreadEachTime - should we check the thread each time
      * @param exceptionOnTooManyThreads - should we throw an exception if too many threads created.
-     * @param checkResultFullyDrained - check the result is fully drained each time.
+     * @param checkFullyDrainedOnceOnly - check the result is fully drained once only each time.
      * @param useNio - use NIO rather than Java Heap memory.
      */
     public CombiningRangeContainer( long[] data,
                                     boolean checkThreadEachTime,
                                     boolean exceptionOnTooManyThreads,
-                                    boolean checkResultFullyDrained,
+                                    boolean checkFullyDrainedOnceOnly,
                                     boolean useNio) {
         this.checkThreadEachTime = checkThreadEachTime;
         this.exceptionOnTooManyThreads = exceptionOnTooManyThreads;
-        this.checkResultFullyDrained = checkResultFullyDrained;
+        this.checkFullyDrainedOnceOnly = checkFullyDrainedOnceOnly;
         this.useNio = useNio;
         if(data == null || data.length == 0 ) {
             throw new ArrayIndexOutOfBoundsException("Data should not be empty in Range Container");
@@ -69,7 +69,7 @@ public class CombiningRangeContainer implements RangeContainer {
     @Override
     public Ids findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
         Pair<BinarySearchRangeContainer, ScanningRangeContainer> pair = threadPairMap.computeIfAbsent(Thread.currentThread(),
-                k -> new ImmutablePair<>(new BinarySearchRangeContainer(data, checkThreadEachTime, useNio), new ScanningRangeContainer(data, checkThreadEachTime)));
+                k -> new ImmutablePair<>(new BinarySearchRangeContainer(data, checkThreadEachTime, checkFullyDrainedOnceOnly, useNio), new ScanningRangeContainer(data, checkThreadEachTime, checkFullyDrainedOnceOnly)));
 
         // we could warn here if the pool gets too large, which suggests large thread usage.
         // I'd prefer to throw an Exception, but we probably need to keep going in a PROD situation.

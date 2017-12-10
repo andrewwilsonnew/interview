@@ -8,6 +8,6 @@ import com.workday.interview.RangeContainer;
 public class BinaryNioSearchRangeContainerTest extends BinarySearchRangeContainerTest {
     @Override
     protected RangeContainer getRangeContainer(long[] data) {
-        return new BinarySearchRangeContainer(data,true, true);
+        return new BinarySearchRangeContainer(data, true, false, true);
     }
 }

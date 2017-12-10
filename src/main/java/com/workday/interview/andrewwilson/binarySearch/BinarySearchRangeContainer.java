@@ -34,8 +34,8 @@ public class BinarySearchRangeContainer implements RangeContainer {
     private final BinarySearchIds ids;
 
 
-    public BinarySearchRangeContainer(long[] data, boolean checkThreadEachTime, boolean nio) {
-        ids = new BinarySearchIds(checkThreadEachTime);
+    public BinarySearchRangeContainer(long[] data,  boolean checkThreadEachTime, boolean checkFullyDrainedOnceOnly, boolean nio) {
+        ids = new BinarySearchIds(checkThreadEachTime, checkFullyDrainedOnceOnly);
         output = new short[data.length];
         List<Pair<Long, Short>> sorted = new ArrayList<>(data.length);
         for(short i=0;i<data.length;i++) {
@@ -57,6 +57,7 @@ public class BinarySearchRangeContainer implements RangeContainer {
             }
         });
 
+        // @todo this should probably be done with subclasses, but time constraints...
         sortedKeys = nio ? ShortBuffer.allocate(data.length).array() : new short[data.length];
         sortedValues = nio ? LongBuffer.allocate(data.length).array() : new long[data.length];
 

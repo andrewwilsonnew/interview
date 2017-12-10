@@ -16,12 +16,12 @@ import java.util.List;
 /**
  * Performance Test for Suite.  Would consider using JMH.
  */
-public class PerformanceTest {
-    public static final Logger LOGGER = Logger.getLogger(PerformanceTest.class);
+public class MicroBenchmarkingPerformanceTest {
+    public static final Logger LOGGER = Logger.getLogger(MicroBenchmarkingPerformanceTest.class);
 
     @Test public void testPerformance() {
 
-        LOGGER.info("Performance test will take about 2 minutes...");
+        LOGGER.info("MicroBenchmarkingPerformanceTest will take about 2 minutes...");
 
         // populate the inital data.
         long[] data = new long[Short.MAX_VALUE];
@@ -31,9 +31,9 @@ public class PerformanceTest {
         }
 
         List<Pair<String,RangeContainer>> handlers = new ArrayList<>();
-        handlers.add(new ImmutablePair<>("Scan", new ScanningRangeContainer(data, false)));
-        handlers.add(new ImmutablePair<>("Binary", new BinarySearchRangeContainer(data, false, false)));
-        handlers.add(new ImmutablePair<>("Binary Nio", new BinarySearchRangeContainer(data, false, true)));
+        handlers.add(new ImmutablePair<>("Scan", new ScanningRangeContainer(data, false, false)));
+        handlers.add(new ImmutablePair<>("Binary", new BinarySearchRangeContainer(data, false, false, false)));
+        handlers.add(new ImmutablePair<>("Binary Nio", new BinarySearchRangeContainer(data, false, false, true)));
         handlers.add(new ImmutablePair<>("Combining", new CombiningRangeContainer(data)));
 
         long results[][] = new long[handlers.size()][11];
