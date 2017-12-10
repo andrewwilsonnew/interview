@@ -5,8 +5,13 @@ import com.workday.interview.RangeContainer;
 import com.workday.interview.andrewwilson.binarySearch.BinarySearchRangeContainer;
 import com.workday.interview.andrewwilson.combining.CombiningRangeContainer;
 import com.workday.interview.andrewwilson.scanning.ScanningRangeContainer;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Performance Test for Suite.  Would consider using JMH.
@@ -16,6 +21,8 @@ public class PerformanceTest {
 
     @Test public void testPerformance() {
 
+        LOGGER.info("Performance test will take about 2 minutes...");
+
         // populate the inital data.
         long[] data = new long[Short.MAX_VALUE];
         for(int i=0;i<data.length;i++) {
@@ -23,20 +30,22 @@ public class PerformanceTest {
             data[i] = (long)(Short.MIN_VALUE + (Math.random()*2*Short.MAX_VALUE));
         }
 
-        RangeContainer[] handlers = {
-                new ScanningRangeContainer(data, false),
-                new BinarySearchRangeContainer(data, false),
-                new CombiningRangeContainer(data)};
-        long results[][] = new long[handlers.length][11];
+        List<Pair<String,RangeContainer>> handlers = new ArrayList<>();
+        handlers.add(new ImmutablePair<>("Scan", new ScanningRangeContainer(data, false)));
+        handlers.add(new ImmutablePair<>("Binary", new BinarySearchRangeContainer(data, false, false)));
+        handlers.add(new ImmutablePair<>("Binary Nio", new BinarySearchRangeContainer(data, false, true)));
+        handlers.add(new ImmutablePair<>("Combining", new CombiningRangeContainer(data)));
+
+        long results[][] = new long[handlers.size()][11];
 
         int count = 0;
 
         for(int range=0;range<=10;range++) {
-            for(int handler=0;handler<handlers.length;handler++) {
+            for(int handler=0;handler<handlers.size();handler++) {
                 long start = System.currentTimeMillis();
                 long finish = Short.MIN_VALUE + (((long)Short.MAX_VALUE)-((long)Short.MIN_VALUE))*range/10;
                 for(int loopCount=0;loopCount<10000;loopCount++) {
-                    Ids idsInRange = handlers[handler].findIdsInRange(Short.MIN_VALUE, finish, true, true);
+                    Ids idsInRange = handlers.get(handler).getValue().findIdsInRange(Short.MIN_VALUE, finish, true, true);
                     while (idsInRange.nextId() != -1) {
                         count++;
                     }
@@ -47,8 +56,8 @@ public class PerformanceTest {
 
         // print out the results.
         LOGGER.info("=========== Cut here and paste into excel =======================");
-        for(int i=0;i<handlers.length;i++) {
-            System.out.print(handlers[i].getClass().getSimpleName()+" || ");
+        for(int i=0;i<handlers.size();i++) {
+            System.out.print(handlers.get(i).getKey()+" || ");
             for(int j=0;j<=10;j++) {
                 System.out.print(results[i][j]+" | ");
             }

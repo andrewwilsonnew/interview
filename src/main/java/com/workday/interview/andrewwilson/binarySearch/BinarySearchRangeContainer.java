@@ -6,6 +6,8 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
 
+import java.nio.LongBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -32,7 +34,7 @@ public class BinarySearchRangeContainer implements RangeContainer {
     private final BinarySearchIds ids;
 
 
-    public BinarySearchRangeContainer(long[] data, boolean checkThreadEachTime) {
+    public BinarySearchRangeContainer(long[] data, boolean checkThreadEachTime, boolean nio) {
         ids = new BinarySearchIds(checkThreadEachTime);
         output = new short[data.length];
         List<Pair<Long, Short>> sorted = new ArrayList<>(data.length);
@@ -55,8 +57,8 @@ public class BinarySearchRangeContainer implements RangeContainer {
             }
         });
 
-        sortedKeys = new short[data.length];
-        sortedValues = new long[data.length];
+        sortedKeys = nio ? ShortBuffer.allocate(data.length).array() : new short[data.length];
+        sortedValues = nio ? LongBuffer.allocate(data.length).array() : new long[data.length];
 
         // write out the 2 arrays in sorted order.
         for(short i=0;i<data.length;i++) {

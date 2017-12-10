@@ -37,7 +37,7 @@ public class CombiningRangeContainer implements RangeContainer {
      * @param data The data to use
      */
     public CombiningRangeContainer(long data[]) {
-        this(data, false, false, false, false);
+        this(data, false, false, false, true);
     }
 
     /**
@@ -69,7 +69,7 @@ public class CombiningRangeContainer implements RangeContainer {
     @Override
     public Ids findIdsInRange(long fromValue, long toValue, boolean fromInclusive, boolean toInclusive) {
         Pair<BinarySearchRangeContainer, ScanningRangeContainer> pair = threadPairMap.computeIfAbsent(Thread.currentThread(),
-                k -> new ImmutablePair<>(new BinarySearchRangeContainer(data, checkThreadEachTime), new ScanningRangeContainer(data, checkThreadEachTime)));
+                k -> new ImmutablePair<>(new BinarySearchRangeContainer(data, checkThreadEachTime, useNio), new ScanningRangeContainer(data, checkThreadEachTime)));
 
         // we could warn here if the pool gets too large, which suggests large thread usage.
         // I'd prefer to throw an Exception, but we probably need to keep going in a PROD situation.

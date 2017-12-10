@@ -13,7 +13,7 @@ public class BinarySearchRangeContainerTest extends ScanningRangeContainerTest {
 
     @Override
     protected RangeContainer getRangeContainer(long[] data) {
-        return new BinarySearchRangeContainer(data,true);
+        return new BinarySearchRangeContainer(data,true, false);
     }
 
     @Test
