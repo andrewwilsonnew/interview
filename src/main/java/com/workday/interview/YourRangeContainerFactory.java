@@ -7,6 +7,6 @@ import com.workday.interview.andrewwilson.combining.CombiningRangeContainer;
  */
 public class YourRangeContainerFactory implements RangeContainerFactory {
     public RangeContainer createContainer(long[] data) {
-        return new CombiningRangeContainer(data, false);
+        return new CombiningRangeContainer(data);
     }
 }

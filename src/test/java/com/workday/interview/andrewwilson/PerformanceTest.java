@@ -26,7 +26,7 @@ public class PerformanceTest {
         RangeContainer[] handlers = {
                 new ScanningRangeContainer(data, false),
                 new BinarySearchRangeContainer(data, false),
-                new CombiningRangeContainer(data,false)};
+                new CombiningRangeContainer(data)};
         long results[][] = new long[handlers.length][11];
 
         int count = 0;

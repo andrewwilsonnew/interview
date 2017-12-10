@@ -20,7 +20,7 @@ public class CombiningRangeContainerTest extends BinarySearchRangeContainerTest 
 
     @Override
     protected RangeContainer getRangeContainer(long[] data) {
-        return new CombiningRangeContainer(data,true);
+        return new CombiningRangeContainer(data,true,true,true,true);
     }
 
     /**
@@ -70,5 +70,15 @@ public class CombiningRangeContainerTest extends BinarySearchRangeContainerTest 
 
     @Test public void testWrongWayRound() {
         assertEquals("Wrong way round should return Empty Range", EmptyIds.class, rc.findIdsInRange(16,15,true,true).getClass());
+    }
+
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void testNullData() {
+        new CombiningRangeContainer(null);
+    }
+
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void testEmptyData() {
+        new CombiningRangeContainer(new long[0]);
     }
 }

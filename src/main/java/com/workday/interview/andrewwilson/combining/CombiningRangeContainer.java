@@ -27,10 +27,39 @@ public class CombiningRangeContainer implements RangeContainer {
     private final Map<Thread, Pair<BinarySearchRangeContainer, ScanningRangeContainer>> threadPairMap = new ConcurrentHashMap<>();
     private final long[] data;
     private final boolean checkThreadEachTime;
+    private final boolean exceptionOnTooManyThreads;
+    private final boolean checkResultFullyDrained;
+    private final boolean useNio;
     private boolean isWarnedThreadUsage;
 
-    public CombiningRangeContainer(long[] data, boolean checkThreadEachTime) {
+    /**
+     * Suggested usage constructor.
+     * @param data The data to use
+     */
+    public CombiningRangeContainer(long data[]) {
+        this(data, false, false, false, false);
+    }
+
+    /**
+     * Constructor
+     * @param data - the original data
+     * @param checkThreadEachTime - should we check the thread each time
+     * @param exceptionOnTooManyThreads - should we throw an exception if too many threads created.
+     * @param checkResultFullyDrained - check the result is fully drained each time.
+     * @param useNio - use NIO rather than Java Heap memory.
+     */
+    public CombiningRangeContainer( long[] data,
+                                    boolean checkThreadEachTime,
+                                    boolean exceptionOnTooManyThreads,
+                                    boolean checkResultFullyDrained,
+                                    boolean useNio) {
         this.checkThreadEachTime = checkThreadEachTime;
+        this.exceptionOnTooManyThreads = exceptionOnTooManyThreads;
+        this.checkResultFullyDrained = checkResultFullyDrained;
+        this.useNio = useNio;
+        if(data == null || data.length == 0 ) {
+            throw new ArrayIndexOutOfBoundsException("Data should not be empty in Range Container");
+        }
         if(data.length > Short.MAX_VALUE) {
             throw new ArrayIndexOutOfBoundsException("Data has length greater than 32K : " + data.length);
         }
@@ -42,11 +71,16 @@ public class CombiningRangeContainer implements RangeContainer {
         Pair<BinarySearchRangeContainer, ScanningRangeContainer> pair = threadPairMap.computeIfAbsent(Thread.currentThread(),
                 k -> new ImmutablePair<>(new BinarySearchRangeContainer(data, checkThreadEachTime), new ScanningRangeContainer(data, checkThreadEachTime)));
 
-        // @todo we could warn here if the pool gets too large, which suggests large thread usage.
+        // we could warn here if the pool gets too large, which suggests large thread usage.
         // I'd prefer to throw an Exception, but we probably need to keep going in a PROD situation.
-        if(!isWarnedThreadUsage && threadPairMap.size() * 2 > Runtime.getRuntime().availableProcessors()) {
-            LOG.error("Range Container is being used incorrectly and probably leaking");
-            isWarnedThreadUsage = true;
+        if( threadPairMap.size() * 2 > Runtime.getRuntime().availableProcessors()) {
+            String message = "Range Container is being used incorrectly and probably leaking size : " + threadPairMap.size();
+            if( exceptionOnTooManyThreads) {
+                throw new IllegalThreadStateException(message);
+            } else if(isWarnedThreadUsage ) {
+                LOG.error(message);
+                isWarnedThreadUsage = true;
+            }
         }
 
         BinarySearchRangeContainer binarySearchRangeContainer = pair.getLeft();
