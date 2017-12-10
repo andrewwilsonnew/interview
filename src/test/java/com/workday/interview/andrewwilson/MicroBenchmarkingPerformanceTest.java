@@ -21,7 +21,7 @@ public class MicroBenchmarkingPerformanceTest {
 
     @Test public void testPerformance() {
 
-        LOGGER.info("MicroBenchmarkingPerformanceTest will take about 2 minutes...");
+        LOGGER.info("MicroBenchmarkingPerformanceTest will take about 3 minutes...");
 
         // populate the inital data.
         long[] data = new long[Short.MAX_VALUE];
@@ -35,6 +35,8 @@ public class MicroBenchmarkingPerformanceTest {
         handlers.add(new ImmutablePair<>("Binary", new BinarySearchRangeContainer(data, false, false, false)));
         handlers.add(new ImmutablePair<>("Binary Nio", new BinarySearchRangeContainer(data, false, false, true)));
         handlers.add(new ImmutablePair<>("Combining", new CombiningRangeContainer(data)));
+        handlers.add(new ImmutablePair<>("Combining with all checks", new CombiningRangeContainer(data, true,true,true,true)));
+
 
         long results[][] = new long[handlers.size()][11];
 

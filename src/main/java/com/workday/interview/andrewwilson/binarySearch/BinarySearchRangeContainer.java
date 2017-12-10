@@ -5,6 +5,7 @@ import com.workday.interview.RangeContainer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
+import sun.misc.Contended;
 
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
@@ -20,11 +21,11 @@ import java.util.List;
 public class BinarySearchRangeContainer implements RangeContainer {
     private static final Logger LOG = Logger.getLogger(BinarySearchRangeContainer.class);
 
-    //@Contended
+    @Contended
     private final short[] sortedKeys;
-    //@Contended
+    @Contended
     private final long[] sortedValues;
-    //@Contended
+    @Contended
     private final short[] output;
 
     private final long bottomLimit;
