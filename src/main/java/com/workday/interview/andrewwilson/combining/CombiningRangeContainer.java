@@ -95,10 +95,9 @@ public class CombiningRangeContainer implements RangeContainer {
         return rangeContainer.findIdsInRange(fromValue, toValue, fromInclusive, toInclusive);
     }
 
-    public static boolean checkThread(Thread owningThread) {
+    public static void checkThread(Thread owningThread) {
         if(!Thread.currentThread().equals(owningThread)) {
             throw new IllegalThreadStateException("Caller thread " + Thread.currentThread() + " is not creating thread " + owningThread);
         }
-        return true;
     }
 }
