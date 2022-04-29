@@ -8,7 +8,7 @@ import com.workday.interview.andrewwilson.scanning.ScanningRangeContainer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +16,11 @@ import java.util.List;
 /**
  * Performance Test for Suite.  Would consider using JMH.
  */
-public class MicroBenchmarkingPerformanceTest {
+class MicroBenchmarkingPerformanceTest {
     public static final Logger LOGGER = Logger.getLogger(MicroBenchmarkingPerformanceTest.class);
 
-    @Test public void testPerformance() {
+    @Test
+    void testPerformance() {
 
         LOGGER.info("MicroBenchmarkingPerformanceTest will take about 3 minutes...");
 
@@ -38,7 +39,7 @@ public class MicroBenchmarkingPerformanceTest {
         handlers.add(new ImmutablePair<>("Combining with all checks", new CombiningRangeContainer(data, true,true,true,true)));
 
 
-        long results[][] = new long[handlers.size()][11];
+        long[][] results = new long[handlers.size()][11];
 
         int count = 0;
 
